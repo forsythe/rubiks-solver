@@ -13,9 +13,8 @@ public class Rubik {
     
     
     public static void main(String[] args) {
-        // TODO code application logic here
-        Node n = new Node();
-        
+        int[][] ka = {{1,2,3},{4,5,3},{3,3,3}};
+        Node n = new Node(ka);
     }
     
 }
