@@ -11,8 +11,13 @@ package rubik;
  */
 public class Node {
 
-    public static final String[] COLORS = {"G", "O", "R", "W", "B", "Y"};
-    //green, orange, red, white, blue, yellow
+    public static final String[] COLORS = {"G", "O", "R", "W", "B", "Y"};  //green, orange, red, white, blue, yellow
+
+    public enum Move {
+        U, Ui, U2, L, Li, L2, F, Fi, F2, R, Ri, R2, B, Bi, B2, D, Di, D2;
+    }
+
+    Move cur; //Move to achieve current node
 
     int[][] up, down, left, right, front, back;
 
@@ -23,10 +28,6 @@ public class Node {
         right = right_rhs;
         front = front_rhs;
         back = back_rhs;
-    }
-    
-    public Node(int[][] p){
-        rotateCCW(p);
     }
 
     public void rotateCW(int[][] face) { //clockwise
@@ -54,32 +55,63 @@ public class Node {
         face[2][1] = face[1][0];
         face[1][0] = temp;
     }
-
-    public void u() { //rotate upper clockwise
-
+    
+    public void rotate180(int[][] face){
+        
     }
-
-    public void ui() { //rotate upper anticlockwise
-
-    }
-
-    public void u2() { //rotate upper 180
-
-    }
-
-    public void l() {
-
-    }
-
-    public void li() {
-
-    }
-
-    public void l2() {
-
-    }
-
-    public void f() {
+    
+    public void doMove(Move m) {
+        int[] temp;
+        switch (m) {
+            case U:
+                rotateCW(up);
+                temp = left[1];
+                left[1] = front[1];
+                front[1] = right[1];
+                right[1] = temp;
+                break;
+            case Ui:
+                rotateCCW(up);
+                temp = back[1];
+                back[1] = right[1];
+                right[1] = front[1];
+                front[1] = left[1];
+                left[1] = temp;
+                break;
+            case U2:
+                
+                break;
+            case L:
+                break;
+            case Li:
+                break;
+            case L2:
+                break;
+            case F:
+                break;
+            case Fi:
+                break;
+            case F2:
+                break;
+            case R:
+                break;
+            case Ri:
+                break;
+            case R2:
+                break;
+            case B:
+                break;
+            case Bi:
+                break;
+            case B2:
+                break;
+            case D:
+                break;
+            case Di:
+                break;
+            case D2:
+                break;
+        }
 
     }
 
