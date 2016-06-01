@@ -245,33 +245,114 @@ public class Node {
                 up[0][2] = back[2][0];
                 up[1][2] = back[1][0];
                 up[2][2] = back[0][0];
-                
+
                 back[0][0] = down[2][2];
                 back[1][0] = down[1][2];
                 back[2][0] = down[0][2];
-                
+
                 down[0][2] = front[0][2];
                 down[1][2] = front[1][2];
                 down[2][2] = front[2][2];
-                
+
                 front[0][2] = temp[0];
                 front[1][2] = temp[1];
                 front[2][2] = temp[2];
-
                 break;
             case R2:
+                rotate180(right);
+                swapCol(up, down, 2, 2);
+                temp = new int[]{front[0][2], front[1][2], front[2][2]};
+                front[0][2] = back[2][0];
+                front[1][2] = back[1][0];
+                front[2][2] = back[0][0];
+
+                back[0][0] = temp[2];
+                back[1][0] = temp[1];
+                back[2][0] = temp[0];
                 break;
             case B:
+                rotateCW(back);
+                temp = new int[]{up[0][0], up[0][1], up[0][2]};
+
+                up[0][0] = right[0][2];
+                up[0][1] = right[1][2];
+                up[0][2] = right[2][2];
+
+                right[0][2] = down[2][2];
+                right[1][2] = down[2][1];
+                right[2][2] = down[2][0];
+
+                down[2][0] = left[0][0];
+                down[2][1] = left[1][0];
+                down[2][2] = left[2][0];
+
+                left[0][0] = temp[2];
+                left[1][0] = temp[1];
+                left[2][0] = temp[0];
                 break;
             case Bi:
+                rotateCCW(back);
+                temp = new int[]{up[0][0], up[0][1], up[0][2]};
+
+                up[0][0] = left[2][0];
+                up[0][1] = left[1][0];
+                up[0][2] = left[0][0];
+                
+                left[0][0] = down[2][0];
+                left[1][0] = down[2][1];
+                left[2][0] = down[2][2];
+                
+                down[2][0] = right[2][2];
+                down[2][1] = right[1][2];
+                down[2][2] = right[0][2];
+
+                right[0][2] = temp[0];
+                right[1][2] = temp[1];
+                right[2][2] = temp[2];
                 break;
             case B2:
+                rotate180(back);
+                temp = new int[]{up[0][0], up[0][1], up[0][2]};
+
+                up[0][0] = down[2][2];
+                up[0][1] = down[2][1];
+                up[0][2] = down[2][0];
+                
+                down[2][0] = temp[2];
+                down[2][1] = temp[1];
+                down[2][2] = temp[0];
+                
+                temp = new int[]{left[0][0], left[1][0], left[2][0]};
+                
+                left[0][0] = right[2][2];
+                left[1][0] = right[1][2];
+                left[2][0] = right[0][2];                
+
+                right[0][2] = temp[2];
+                right[1][2] = temp[1];
+                right[2][2] = temp[0];
+                
                 break;
             case D:
+                rotateCW(down);
+                temp = back[2];
+                back[2] = right[2];
+                right[2] = front[2];
+                front[2] = left[2];
+                left[2] = temp;
                 break;
             case Di:
+                rotateCCW(down);
+                temp = back[2];
+                back[2] = left[2];
+                left[2] = front[2];
+                front[2] = right[2];
+                right[2] = temp;
                 break;
             case D2:
+                rotate180(down);
+                swapRow(left, right, 2, 2);
+                swapRow(front, back, 2, 2);
                 break;
         }
 
