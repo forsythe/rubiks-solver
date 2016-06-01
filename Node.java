@@ -5,24 +5,35 @@
  */
 package rubik;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Forsythe
  */
 public class Node {
 
-    public static final String[] COLORS = {"G", "O", "R", "W", "B", "Y"};  //green, orange, red, white, blue, yellow
+    public static final String[] COLORS = {"G", "O", "R", "W", "B", "Y"};
     public static final int GREEN = 0, ORANGE = 1, RED = 2, WHITE = 3, BLUE = 4, YELLOW = 5;
-    
+
     public enum Move {
         U, Ui, U2, L, Li, L2, F, Fi, F2, R, Ri, R2, B, Bi, B2, D, Di, D2;
+
+        public String ToString() {
+            return this.name();
+        }
     }
 
+    public static Move[] moves = {Move.U, Move.Ui, Move.U2, Move.L, Move.Li,
+        Move.L2, Move.F, Move.Fi, Move.F2, Move.R, Move.Ri, Move.R2, Move.B,
+        Move.Bi, Move.B2, Move.D, Move.Di, Move.D2};
+
     Move curMove; //Move to achieve current node
+    Node parent = null;
 
     public int[][] up, down, left, right, front, back;
 
-    public Node(){
+    public Node() {
         up = filled3x3Array(WHITE);
         down = filled3x3Array(YELLOW);
         left = filled3x3Array(ORANGE);
@@ -30,18 +41,79 @@ public class Node {
         front = filled3x3Array(GREEN);
         back = filled3x3Array(BLUE);
     }
-    
-    public static int[][] filled3x3Array(int val){
-        return new int[][]{{val,val,val},{val,val,val},{val,val,val}};
-    }   
-    
+
+    public static int[][] filled3x3Array(int val) {
+        return new int[][]{{val, val, val}, {val, val, val}, {val, val, val}};
+    }
+
+    public static int[][] copy(int[][] input) {
+        int[][] target = new int[3][3];
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                target[r][c] = input[r][c];
+            }
+        }
+        return target;
+    }
+
     public Node(int[][] up_rhs, int[][] down_rhs, int[][] left_rhs, int[][] right_rhs, int[][] front_rhs, int[][] back_rhs) {
-        up = up_rhs;
-        down = down_rhs;
-        left = left_rhs;
-        right = right_rhs;
-        front = front_rhs;
-        back = back_rhs;
+        up = copy(up_rhs);
+        down = copy(down_rhs);
+        left = copy(left_rhs);
+        right = copy(right_rhs);
+        front = copy(front_rhs);
+        back = copy(back_rhs);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        Node b = (Node) other;
+        return (Arrays.deepEquals(up, b.up)
+                && Arrays.deepEquals(down, b.down)
+                && Arrays.deepEquals(left, b.left)
+                && Arrays.deepEquals(right, b.right)
+                && Arrays.deepEquals(front, b.front)
+                && Arrays.deepEquals(back, b.back));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + Arrays.deepHashCode(this.up);
+        hash = 31 * hash + Arrays.deepHashCode(this.down);
+        hash = 31 * hash + Arrays.deepHashCode(this.left);
+        hash = 31 * hash + Arrays.deepHashCode(this.right);
+        hash = 31 * hash + Arrays.deepHashCode(this.front);
+        hash = 31 * hash + Arrays.deepHashCode(this.back);
+        return hash;
+    }
+
+    public boolean isDone() {
+        return (faceOnlyContainsValue(up, WHITE)
+                && faceOnlyContainsValue(down, YELLOW)
+                && faceOnlyContainsValue(left, ORANGE)
+                && faceOnlyContainsValue(right, RED)
+                && faceOnlyContainsValue(front, GREEN)
+                && faceOnlyContainsValue(back, BLUE));
+    }
+
+    public boolean faceOnlyContainsValue(int[][] n, int val) {
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                if (n[r][c] != val)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public Node[] getChildren() {
+        Node[] ans = new Node[18];
+        for (int k = 0; k < 18; k++) {
+            ans[k] = (new Node(up, down, left, right, front, back));
+            ans[k].doMove(moves[k]);
+        }
+        return ans;
     }
 
     public void rotateCW(int[][] face) { //clockwise
@@ -111,7 +183,7 @@ public class Node {
                 temp = back[0];
                 back[0] = left[0];
                 left[0] = front[0];
-                front[0] = right[0];                
+                front[0] = right[0];
                 right[0] = temp;
                 break;
             case Ui:
@@ -229,7 +301,7 @@ public class Node {
                 temp = new int[]{left[0][2], left[1][2], left[2][2]};
                 left[0][2] = right[2][0];
                 left[1][2] = right[1][0];
-                left[0][0] = right[0][0];
+                left[2][2] = right[0][0];
 
                 right[0][0] = temp[2];
                 right[1][0] = temp[1];
@@ -379,5 +451,15 @@ public class Node {
             }
             System.out.println();
         }
+    }
+
+    public String toString() {
+        print(up);
+        print(down);
+        print(left);
+        print(right);
+        print(front);
+        print(back);
+        return "";
     }
 }
