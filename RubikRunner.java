@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import rubik.Node.Move;
 
 class MyCanvas extends JComponent {
 
@@ -68,25 +69,36 @@ public class RubikRunner {
         Node solution = runner.IDS(n, pristineCube);
 
         System.out.println("Solution sequence: ");
-        ArrayList<Node.Move> solveSequence = new ArrayList<>();
+        ArrayList<Move> solveSequence = new ArrayList<>();
 
         while (solution.parent != null) {
             solveSequence.add(0, solution.curMove);
             solution = solution.parent;
         }
 
-        for (Node.Move m : solveSequence) {
+        for (Move m : solveSequence) {
             System.out.print(m + " ");
         }
     }
 
     public void scramble(Node n, int level) {
         System.out.println("Scrambling depth: " + level);
+        ArrayList<Move> scrambleSequence = new ArrayList<>();
 
-        for (int k = 0; k < level; k++) {
-            int pos = (int) (Math.random() * Node.moves.length);
-            n.doMove(Node.moves[pos]);
-            System.out.print(Node.moves[pos] + " ");
+        int pos = (int) (Math.random() * Node.moves.length);
+        scrambleSequence.add(Node.moves[pos]);
+
+        while (scrambleSequence.size() < level) {
+            pos = (int) (Math.random() * Node.moves.length);
+            while (Node.areCounterproductiveMoves(scrambleSequence.get(scrambleSequence.size() - 1), Node.moves[pos])) {
+                pos = (int) (Math.random() * Node.moves.length);
+            }
+            scrambleSequence.add(Node.moves[pos]);
+        }
+
+        for (Move m : scrambleSequence) {
+            n.doMove(m);
+            System.out.print(" " + m);
         }
         System.out.println();
     }
