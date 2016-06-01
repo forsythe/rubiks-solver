@@ -12,15 +12,29 @@ package rubik;
 public class Node {
 
     public static final String[] COLORS = {"G", "O", "R", "W", "B", "Y"};  //green, orange, red, white, blue, yellow
-
+    public static final int GREEN = 0, ORANGE = 1, RED = 2, WHITE = 3, BLUE = 4, YELLOW = 5;
+    
     public enum Move {
         U, Ui, U2, L, Li, L2, F, Fi, F2, R, Ri, R2, B, Bi, B2, D, Di, D2;
     }
 
-    Move cur; //Move to achieve current node
+    Move curMove; //Move to achieve current node
 
-    int[][] up, down, left, right, front, back;
+    public int[][] up, down, left, right, front, back;
 
+    public Node(){
+        up = filled3x3Array(WHITE);
+        down = filled3x3Array(YELLOW);
+        left = filled3x3Array(ORANGE);
+        right = filled3x3Array(RED);
+        front = filled3x3Array(GREEN);
+        back = filled3x3Array(BLUE);
+    }
+    
+    public static int[][] filled3x3Array(int val){
+        return new int[][]{{val,val,val},{val,val,val},{val,val,val}};
+    }   
+    
     public Node(int[][] up_rhs, int[][] down_rhs, int[][] left_rhs, int[][] right_rhs, int[][] front_rhs, int[][] back_rhs) {
         up = up_rhs;
         down = down_rhs;
@@ -90,13 +104,14 @@ public class Node {
 
     public void doMove(Move m) {
         int[] temp;
-
+        curMove = m;
         switch (m) {
             case U:
                 rotateCW(up);
-                temp = left[0];
+                temp = back[0];
+                back[0] = left[0];
                 left[0] = front[0];
-                front[0] = right[0];
+                front[0] = right[0];                
                 right[0] = temp;
                 break;
             case Ui:
@@ -297,11 +312,11 @@ public class Node {
                 up[0][0] = left[2][0];
                 up[0][1] = left[1][0];
                 up[0][2] = left[0][0];
-                
+
                 left[0][0] = down[2][0];
                 left[1][0] = down[2][1];
                 left[2][0] = down[2][2];
-                
+
                 down[2][0] = right[2][2];
                 down[2][1] = right[1][2];
                 down[2][2] = right[0][2];
@@ -317,21 +332,21 @@ public class Node {
                 up[0][0] = down[2][2];
                 up[0][1] = down[2][1];
                 up[0][2] = down[2][0];
-                
+
                 down[2][0] = temp[2];
                 down[2][1] = temp[1];
                 down[2][2] = temp[0];
-                
+
                 temp = new int[]{left[0][0], left[1][0], left[2][0]};
-                
+
                 left[0][0] = right[2][2];
                 left[1][0] = right[1][2];
-                left[2][0] = right[0][2];                
+                left[2][0] = right[0][2];
 
                 right[0][2] = temp[2];
                 right[1][2] = temp[1];
                 right[2][2] = temp[0];
-                
+
                 break;
             case D:
                 rotateCW(down);
@@ -355,7 +370,6 @@ public class Node {
                 swapRow(front, back, 2, 2);
                 break;
         }
-
     }
 
     public static void print(int[][] n) {
