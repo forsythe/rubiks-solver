@@ -59,15 +59,17 @@ public class RubikRunner {
         MyCanvas cvs = new MyCanvas();
         cvs.setNode(n);
         window.getContentPane().add(cvs);
-        //window.setVisible(true);
+        window.setVisible(true);
 
         RubikRunner runner = new RubikRunner();
 
-        runner.scramble(n, 10);
-        Node solution = runner.IDS(n);
+        runner.scramble(n, 7);
+        Node pristineCube = new Node();
+        Node solution = runner.IDS(n, pristineCube);
 
         System.out.println("Solution sequence: ");
-        ArrayList<Node.Move> solveSequence = new ArrayList<Node.Move>();
+        ArrayList<Node.Move> solveSequence = new ArrayList<>();
+
         while (solution.parent != null) {
             solveSequence.add(0, solution.curMove);
             solution = solution.parent;
@@ -89,11 +91,11 @@ public class RubikRunner {
         System.out.println();
     }
 
-    public Node IDS(Node root) {
+    public Node IDS(Node root, Node goal) {
         Node result;
         for (int depth = 0; depth < MAX_SEARCH_DEPTH; depth++) {
-
-            result = depthLimitedSearch(root, depth);
+            //System.out.println("cur depth: " + depth);
+            result = depthLimitedSearch(root, goal, depth);
 
             if (result != null) {
                 System.out.println("Solution found at depth: " + depth);
@@ -103,19 +105,25 @@ public class RubikRunner {
         return null;
     }
 
-    public Node depthLimitedSearch(Node n, int depth) {
+    public Node depthLimitedSearch(Node n, Node goal, int depth) {
 
-        if (depth == 0 && n.isDone()) {
+        if (depth == 0 && n.equals(goal)) {
             return n;
         } else if (depth > 0) {
             for (Node child : n.getChildren()) {
+                if (child == null) //necessary, because one will be null ("undo" moves not included in children)
+                    continue;
                 child.parent = n;
-                Node result = depthLimitedSearch(child, depth - 1);
+                Node result = depthLimitedSearch(child, goal, depth - 1);
                 if (result != null)
                     return result;
             }
         }
         return null;
+    }
+
+    public int heuristic(Node n) {
+        return 0;
     }
 
 }

@@ -6,6 +6,7 @@
 package rubik;
 
 import java.util.Arrays;
+import static rubik.Node.Move.*;
 
 /**
  *
@@ -24,12 +25,30 @@ public class Node {
         }
     }
 
-    public static Move[] moves = {Move.U, Move.Ui, Move.U2, Move.L, Move.Li,
-        Move.L2, Move.F, Move.Fi, Move.F2, Move.R, Move.Ri, Move.R2, Move.B,
-        Move.Bi, Move.B2, Move.D, Move.Di, Move.D2};
+    public static Move[] moves = {U, Ui, U2, L, Li, L2, F, Fi, F2, R, Ri, R2, B, Bi, B2, D, Di, D2};
 
-    Move curMove; //Move to achieve current node
+    Move curMove = null; //Move to achieve current node
     Node parent = null;
+
+    public static boolean areCounterproductiveMoves(Move a, Move b) {
+        boolean flagA = false, flagB = false;
+
+        for (int k = 0; k < 18; k++) {
+            if (k % 3 == 0) {
+                if (flagA && flagB)
+                    return true;
+                flagA = false;
+                flagB = false;
+            }
+            if (a == moves[k])
+                flagA = true;
+            if (b == moves[k])
+                flagB = true;
+
+        }
+        return false;
+
+    }
 
     public int[][] up, down, left, right, front, back;
 
@@ -110,6 +129,10 @@ public class Node {
     public Node[] getChildren() {
         Node[] ans = new Node[18];
         for (int k = 0; k < 18; k++) {
+            if (areCounterproductiveMoves(curMove, moves[k])) {
+                ans[k] = null;
+                continue;
+            }
             ans[k] = (new Node(up, down, left, right, front, back));
             ans[k].doMove(moves[k]);
         }
