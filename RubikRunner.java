@@ -64,7 +64,7 @@ public class RubikRunner {
 
         RubikRunner runner = new RubikRunner();
 
-        runner.scramble(n, 7);
+        runner.scramble(n, 6);
         Node pristineCube = new Node();
         Node solution = runner.IDS(n, pristineCube);
 
@@ -101,6 +101,8 @@ public class RubikRunner {
             System.out.print(" " + m);
         }
         System.out.println();
+        
+        n.curMove = null; //don't want IDS to think that curMove was from another move
     }
 
     public Node IDS(Node root, Node goal) {
@@ -123,7 +125,7 @@ public class RubikRunner {
             return n;
         } else if (depth > 0) {
             for (Node child : n.getChildren()) {
-                if (child == null) //necessary, because one will be null ("undo" moves not included in children)
+                if (child == null)//necessary, because one will be null ("undo" moves not included in children)
                     continue;
                 child.parent = n;
                 Node result = depthLimitedSearch(child, goal, depth - 1);

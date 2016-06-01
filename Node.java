@@ -31,15 +31,24 @@ public class Node {
     Node parent = null;
 
     public static boolean areCounterproductiveMoves(Move a, Move b) {
+        if (a == null || b == null)
+            return false;
+
+        if (a == b) {
+            if (a == U2 || a == L2 || a == D2 || a == R2 || a == F2 || a == B2)
+                return true;
+        }
+
         boolean flagA = false, flagB = false;
 
         for (int k = 0; k < 18; k++) {
+            if (flagA && flagB)
+                return true;
             if (k % 3 == 0) {
-                if (flagA && flagB)
-                    return true;
                 flagA = false;
                 flagB = false;
             }
+
             if (a == moves[k])
                 flagA = true;
             if (b == moves[k])
@@ -127,15 +136,21 @@ public class Node {
     }
 
     public Node[] getChildren() {
+        //System.out.print("cur move: " + curMove + ", skipping:");
         Node[] ans = new Node[18];
         for (int k = 0; k < 18; k++) {
             if (areCounterproductiveMoves(curMove, moves[k])) {
+                //System.out.println(" " + moves[k]);
+                //System.out.println(curMove + " " + moves[k]);
                 ans[k] = null;
                 continue;
             }
             ans[k] = (new Node(up, down, left, right, front, back));
             ans[k].doMove(moves[k]);
+            //System.out.println(moves[k]);
         }
+        //System.out.println("___");
+
         return ans;
     }
 
